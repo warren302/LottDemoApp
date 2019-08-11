@@ -11,7 +11,7 @@ class DrawPrinter : CommandLineRunner {
     override fun run(vararg args: String?) {
         var filename : String = "dl.csv"
         val reader =  MyCSVReader()
-        reader.readAllLines(filename).forEach{line -> println(line)}
+        reader.readAllLines(filename).forEach{println(it)}
     }
 
 
