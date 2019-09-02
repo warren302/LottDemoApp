@@ -1,5 +1,8 @@
 package com.amw.lottodemoapp.csv
 
+import com.amw.lottodemoapp.mapper.Mapper
+import com.amw.lottodemoapp.model.Draw
+import com.amw.lottodemoapp.repository.LottoNumberRepository
 import java.io.Reader
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -7,10 +10,20 @@ import com.opencsv.CSVReaderBuilder
 import com.opencsv.CSVParserBuilder
 
 
+
+
 class MyCSVReader {
 
+    @Throws(Exception::class)
+    fun convertAllToEntities(filename: String, repo : LottoNumberRepository) : List<Draw> {
+        val reader = Files.newBufferedReader(Paths.get(
+                ClassLoader.getSystemResource(filenameVerification(filename)).toURI()))
+        val mapper = Mapper()
+        return readAll(reader).map { mapper.toEntity(it, repo)}
+    }
+
     var parser = CSVParserBuilder()
-            .withSeparator(',')
+            .withSeparator(';')
             .withIgnoreQuotations(true)
             .build()
 
@@ -37,8 +50,5 @@ class MyCSVReader {
     private fun filenameVerification(filename : String) : String {
         return filename
     }
-
-
-
 }
 

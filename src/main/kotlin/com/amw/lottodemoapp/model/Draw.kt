@@ -1,24 +1,26 @@
 package com.amw.lottodemoapp.model
 
 import java.time.LocalDate
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import javax.persistence.*
 import javax.validation.constraints.NotNull
+import javax.persistence.FetchType
+
+
 
 @Entity
 data class Draw (
 
     @Id @GeneratedValue(strategy =  GenerationType.IDENTITY)
-    val id : Long = 0,
+    var id : Long = -1,
 
     @get: NotNull
-    val lotNumber : Int,
+    var lotNumber : Int,
 
     @get: NotNull
-    val dateOfDraw : LocalDate,
+    var dateOfDraw : LocalDate,
 
-    @get: NotNull
-    val numbers : UIntArray
+    @Column(name = "numbers")
+    @OneToMany(cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
+    @JoinColumn(name = "draw_id")
+    var numbers : MutableSet<LottoNumber>? = null
 )

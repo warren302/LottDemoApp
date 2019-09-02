@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class LottoDemoAppApplication
 
 fun main(args: Array<String>) {
-	runApplication<LottoDemoAppApplication>(*args)
+    runApplication<LottoDemoAppApplication>(*args)
 }
