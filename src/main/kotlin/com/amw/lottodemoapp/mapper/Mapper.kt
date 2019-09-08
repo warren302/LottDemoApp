@@ -2,8 +2,6 @@ package com.amw.lottodemoapp.mapper
 
 import com.amw.lottodemoapp.model.Draw
 import com.amw.lottodemoapp.repository.LottoNumberRepository
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 
