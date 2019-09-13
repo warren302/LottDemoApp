@@ -39,16 +39,14 @@ class WebController {
     @RequestMapping("/numbers/{numbers}")
     fun findByNumbers(@PathVariable("numbers") numbers : Array<String>) : List<Draw> {
         val args = numbers.map{lottoNumberRepo.findOneByValue(Integer.parseInt(it))}.toSet()
-        if (args.size != numbers.size) throw IllegalArgumentException("parameters values are duplicated!")
-        val result : List<Draw>
-        when (args.size) {
-            1 -> result = repository.findByNumbersIn(arrayOf(args.single()))
-            2 -> result = repository.findBy2NumbersIn(arrayOf(args.first()), arrayOf(args.last()))
+        require(args.size == numbers.size) { "parameters values are duplicated!" }
+        return when (args.size) {
+            1 -> repository.findByNumbersIn(arrayOf(args.single()))
+            2 -> repository.findBy2NumbersIn(arrayOf(args.first()), arrayOf(args.last()))
             else -> {
                 throw IllegalArgumentException("Number of arguments = ${args.size} is not handled!")
             }
         }
-        return result
     }
 
 
