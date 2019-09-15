@@ -8,8 +8,11 @@ data class LottoNumber(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         var id: Long = -1,
 
-        @Column
-        var value: Int
+        var value: Int,
+
+        @ManyToOne
+        @JoinColumn(name ="draw_id")
+        var draw: Draw
 
 )
 

@@ -16,8 +16,5 @@ data class Draw(
         var lotNumber: Int,
 
         @get: NotNull
-        var dateOfDraw: LocalDate,
-
-        @ManyToMany(cascade = [CascadeType.REMOVE], fetch = FetchType.LAZY)
-        var numbers: MutableSet<LottoNumber>? = null
+        var dateOfDraw: LocalDate
 )

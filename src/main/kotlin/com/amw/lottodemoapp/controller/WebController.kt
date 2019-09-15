@@ -2,7 +2,6 @@ package com.amw.lottodemoapp.controller
 
 import com.amw.lottodemoapp.csv.MyCSVReader
 import com.amw.lottodemoapp.model.Draw
-import com.amw.lottodemoapp.model.LottoNumber
 import com.amw.lottodemoapp.repository.DrawRepository
 import com.amw.lottodemoapp.repository.LottoNumberRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,10 +24,9 @@ class WebController {
 
     @PostConstruct
     fun process() : String {
-        val numbers = Array(49) {i -> LottoNumber(-1, i + 1) }
-        numbers.forEach {  lottoNumberRepo.save(it) }
         val csvReader = MyCSVReader()
-        repository.saveAll(csvReader.convertAllToEntities(CSV_FILENAME, lottoNumberRepo))
+        repository.saveAll(csvReader.convertAllDrawToEntities(CSV_FILENAME))
+        lottoNumberRepo.saveAll(csvReader.convertAllNumberToEntities(CSV_FILENAME, repository))
         return "Done"
     }
 
@@ -38,11 +36,15 @@ class WebController {
 
     @RequestMapping("/numbers/{numbers}")
     fun findByNumbers(@PathVariable("numbers") numbers : Array<String>) : List<Draw> {
-        val args = numbers.map{lottoNumberRepo.findOneByValue(Integer.parseInt(it))}.toSet()
+        val args = numbers.map{Integer.parseInt(it)}.toSet()
         require(args.size == numbers.size) { "parameters values are duplicated!" }
         return when (args.size) {
-            1 -> repository.findByNumbersIn(arrayOf(args.single()))
-            2 -> repository.findBy2NumbersIn(arrayOf(args.first()), arrayOf(args.last()))
+            1 -> repository.findAllBy1Number(args.single())
+            2 -> repository.findAllDrawBy2Numbers(args.first(), args.last())
+            3 -> repository.findAllDrawBy3Numbers(args.first(), args.elementAt(1), args.last())
+            4 -> repository.findAllDrawBy4Numbers(args.first(), args.elementAt(1), args.elementAt(2), args.last())
+            5 -> repository.findAllDrawBy5Numbers(args.first(), args.elementAt(1), args.elementAt(2), args.elementAt(3), args.last())
+            6 -> repository.findAllDrawBy6Numbers(args.first(), args.elementAt(1), args.elementAt(2), args.elementAt(3), args.elementAt(4), args.last())
             else -> {
                 throw IllegalArgumentException("Number of arguments = ${args.size} is not handled!")
             }
