@@ -24,7 +24,7 @@ class WebController {
     @RequestMapping("/numbers/{numbers}")
     fun findByNumbers(@PathVariable("numbers") numbers: Array<String>): List<Draw> {
         val args = numbers.map { Integer.parseInt(it) }.toSet()
-        return Collections.emptyList()
+        return service.findByNumbers(args)
     }
 }
 
