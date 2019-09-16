@@ -29,7 +29,7 @@ class DrawService {
     fun findDrawWithDate(date : LocalDate) = drawList.firstOrNull { it.dateOfDraw == date }
 
     fun findByNumbers(args : Set<Int>) : List<Draw> {
-       return drawList.filter { element -> args.all { arg -> element.numbers.contains(arg) } }
+       return drawList.filter { args.all { arg -> it.numbers.contains(arg) } }
     }
 
     private fun generateTwoDim() {
