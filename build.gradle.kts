@@ -38,7 +38,6 @@ dependencies {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 		exclude(group = "junit", module = "junit")
 	}
-	runtimeOnly("com.h2database:h2:1.4.197")
 
 }
 

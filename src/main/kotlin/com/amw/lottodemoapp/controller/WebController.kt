@@ -18,7 +18,8 @@ class WebController {
 
 
     @RequestMapping("/date/{date}")
-    fun findByDrawDate(@PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) date: LocalDate) = ""
+    fun findByDrawDate(@PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) date: LocalDate)
+            = service.findDrawWithDate(date)
 
     @RequestMapping("/numbers/{numbers}")
     fun findByNumbers(@PathVariable("numbers") numbers: Array<String>): List<Draw> {

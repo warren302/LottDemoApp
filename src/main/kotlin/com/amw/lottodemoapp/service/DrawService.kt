@@ -2,20 +2,19 @@ package com.amw.lottodemoapp.service
 
 import com.amw.lottodemoapp.csv.MyCSVReader
 import com.amw.lottodemoapp.model.Draw
-import org.springframework.stereotype.Component
-import java.util.*
+import org.springframework.stereotype.Service
+import java.time.LocalDate
 import javax.annotation.PostConstruct
 import kotlin.collections.ArrayList
 
 
-@Component
+@Service
 class DrawService {
 
     val CSV_FILENAME = "dl.csv"
 
     lateinit var drawList : List<Draw>
     lateinit var twoDim : Array<Array<MutableSet<Draw>>>
-
 
     @PostConstruct
     fun process() : String {
@@ -27,8 +26,14 @@ class DrawService {
         return "Done"
     }
 
+    fun findDrawWithDate(date : LocalDate) = drawList.firstOrNull { it.dateOfDraw == date }
+
+    fun findByNumbers(args : Set<Int>) {
+       
+    }
+
     private fun generateTwoDim() {
-        twoDim = Array(50, {Array(50, { mutableSetOf<Draw>()})})
+        twoDim = Array(50) {Array(50) { mutableSetOf<Draw>()} }
     }
 
     private fun uploadTwoDim() {
@@ -36,22 +41,19 @@ class DrawService {
     }
 
     private fun printTwoDim() {
-        for (index in 0..twoDim.size - 1) {
-            val line = twoDim[index]
-            for (subindex in 0..line.size - 1) {
-                val mySet = line[subindex]
-                print(mySet.size.toString() + " ")
+        for (row in twoDim) {
+            for (cell in row) {
+                print(cell.size.toString() + " ")
             }
             println()
         }
     }
 
-
     private fun getPairs(draw: Draw): List<Pair<Int, Int>> {
 
         var pairs = ArrayList<Pair<Int, Int>>()
         for (index in 0..draw.numbers.size - 2) {
-            for (subindex in index + 1..draw.numbers.size - 1) {
+            for (subindex in index + 1 until draw.numbers.size) {
                 pairs.add(Pair(draw.numbers[index], draw.numbers[subindex]))
             }
         }
