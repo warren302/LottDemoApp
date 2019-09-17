@@ -32,6 +32,10 @@ class DrawService {
        return drawList.filter { args.all { arg -> it.numbers.contains(arg) } }
     }
 
+    fun findByQuery(args : Set<Any>) : List<Draw> {
+        return emptyList()
+    }
+
     private fun generateTwoDim() {
         twoDim = Array(50) {Array(50) { mutableSetOf<Draw>()} }
     }
