@@ -29,7 +29,7 @@ class WebController {
 
     @RequestMapping("/query/{params}", method = [RequestMethod.GET])
     fun findByQuery(@PathVariable("params") params : Array<String>) : List<Draw> {
-        return emptyList()
+        return service.findByQuery(params)
     }
 }
 

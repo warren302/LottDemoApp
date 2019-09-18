@@ -2,6 +2,7 @@ package com.amw.lottodemoapp.service
 
 import com.amw.lottodemoapp.csv.MyCSVReader
 import com.amw.lottodemoapp.model.Draw
+import com.amw.lottodemoapp.model.SearchResult
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import javax.annotation.PostConstruct
@@ -32,7 +33,8 @@ class DrawService {
        return drawList.filter { args.all { arg -> it.numbers.contains(arg) } }
     }
 
-    fun findByQuery(args : Set<Any>) : List<Draw> {
+    fun findByQuery(args : Array<String>) : List<Draw> {
+
         return emptyList()
     }
 
@@ -50,6 +52,18 @@ class DrawService {
                 print(cell.size.toString() + " ")
             }
             println()
+        }
+    }
+
+    private fun getRequestedNumberOfResults(edge : String, counter : Int, associate : Int) : List<SearchResult> {
+        var listOfResults = twoDim[associate].mapIndexed { index, mutableSet -> SearchResult(Pair(associate,index), mutableSet)}
+        listOfResults = listOfResults.sortedBy { it.draws.size }
+        return when (edge.toUpperCase()) {
+            "TOP" -> {listOfResults.take(counter)}
+            "BOTTOM" -> {listOfResults.takeLast(counter)}
+            else -> {
+                throw IllegalArgumentException("Parameter $edge not recognised!")
+            }
         }
     }
 
