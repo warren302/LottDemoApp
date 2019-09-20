@@ -33,9 +33,9 @@ class DrawService {
        return drawList.filter { args.all { arg -> it.numbers.contains(arg) } }
     }
 
-    fun findByQuery(args : Array<String>) : List<Draw> {
+    fun findByQuery(args : Array<String>) : List<SearchResult> {
 
-        return emptyList()
+        return getRequestedNumberOfResults(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[3]))
     }
 
     private fun generateTwoDim() {
@@ -43,7 +43,10 @@ class DrawService {
     }
 
     private fun uploadTwoDim() {
-        drawList.forEach{element -> getPairs(element).forEach{twoDim[it.first][it.second].add(element)}}
+        drawList.forEach{element -> getPairs(element).forEach{
+            twoDim[it.first][it.second].add(element)
+            twoDim[it.second][it.first].add(element)
+        }}
     }
 
     private fun printTwoDim() {
@@ -56,11 +59,10 @@ class DrawService {
     }
 
     private fun getRequestedNumberOfResults(edge : String, counter : Int, associate : Int) : List<SearchResult> {
-        var listOfResults = twoDim[associate].mapIndexed { index, mutableSet -> SearchResult(Pair(associate,index), mutableSet)}
-        listOfResults = listOfResults.sortedBy { it.draws.size }
+        var listOfResults = twoDim[associate].mapIndexed { index, mutableSet -> SearchResult(Pair(associate,index), mutableSet)}.sortedBy { it.size }
         return when (edge.toUpperCase()) {
-            "TOP" -> {listOfResults.take(counter)}
-            "BOTTOM" -> {listOfResults.takeLast(counter)}
+            "TOP" -> {listOfResults.takeLast(counter)}
+            "BOTTOM" -> {listOfResults.take(counter)}
             else -> {
                 throw IllegalArgumentException("Parameter $edge not recognised!")
             }

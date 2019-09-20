@@ -1,6 +1,7 @@
 package com.amw.lottodemoapp.controller
 
 import com.amw.lottodemoapp.model.Draw
+import com.amw.lottodemoapp.model.SearchResult
 import com.amw.lottodemoapp.service.DrawService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
@@ -28,8 +29,9 @@ class WebController {
     }
 
     @RequestMapping("/query/{params}", method = [RequestMethod.GET])
-    fun findByQuery(@PathVariable("params") params : Array<String>) : List<Draw> {
-        return service.findByQuery(params)
+    fun findByQuery(@PathVariable("params") params : String) : List<SearchResult> {
+        var args = params.split(" ").toTypedArray()
+        return service.findByQuery(args)
     }
 }
 
