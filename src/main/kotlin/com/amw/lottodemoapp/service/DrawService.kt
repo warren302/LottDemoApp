@@ -1,6 +1,7 @@
 package com.amw.lottodemoapp.service
 
 import com.amw.lottodemoapp.csv.MyCSVReader
+import com.amw.lottodemoapp.extension.Pairs
 import com.amw.lottodemoapp.model.Draw
 import com.amw.lottodemoapp.model.SearchResult
 import org.apache.commons.lang3.SystemUtils
@@ -45,7 +46,6 @@ class DrawService {
         generateTwoDim()
         uploadTwoDim()
         printTwoDim()
-        val elapsedTime = System.currentTimeMillis() - start
         println("---------- preparation of numbers two dimensional matrix finished in ${System.currentTimeMillis() - start} ms ---------------------------")
     }
 
@@ -54,7 +54,7 @@ class DrawService {
     }
 
     private fun uploadTwoDim() {
-        drawList.forEach{element -> getPairs(element).forEach{
+        drawList.forEach{element -> element.numbers.Pairs.forEach{
             twoDim[it.first][it.second].add(element)
             twoDim[it.second][it.first].add(element)
         }}
@@ -70,26 +70,12 @@ class DrawService {
     }
 
     private fun getRequestedNumberOfResults(edge : String, counter : Int, associate : Int) : List<SearchResult> {
-        var listOfResults = twoDim[associate].mapIndexed { index, mutableSet -> SearchResult(Pair(associate,index), mutableSet)}.sortedBy { it.size }
+        val listOfResults = twoDim[associate].mapIndexed { index, mutableSet -> SearchResult(Pair(associate,index), mutableSet)}.sortedBy { it.size }
         return when (edge.toUpperCase()) {
             "TOP"       -> listOfResults.takeLast(counter)
             "BOTTOM"    -> listOfResults.take(counter)
             else        -> throw IllegalArgumentException("Parameter $edge not recognised!")
         }
     }
-
-    private fun getPairs(draw: Draw): List<Pair<Int, Int>> {
-
-        var pairs = ArrayList<Pair<Int, Int>>()
-        for (index in 0..draw.numbers.size - 2) {
-            for (subindex in index + 1 until draw.numbers.size) {
-                pairs.add(Pair(draw.numbers[index], draw.numbers[subindex]))
-            }
-        }
-        return pairs
-    }
-
-
-
 
 }
