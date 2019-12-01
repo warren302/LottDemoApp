@@ -3,7 +3,7 @@ package com.amw.lottodemoapp.model
 import com.amw.lottodemoapp.extension.Pairs
 import kotlin.collections.LinkedHashMap
 
-data class SearchResult(val pair: Pair<Int, Int>, val draws : MutableSet<Draw>) {
+data class SearchResult(val pair: Pair<Int, Int>, val draws : Set<Draw>) {
     val size = draws.size
     val associatedNumbers = createAssociatedNumbers()
     val associatedPairs = createAssociatedPairs()

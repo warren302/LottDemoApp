@@ -2,14 +2,12 @@ package com.amw.lottodemoapp.service
 
 import com.amw.lottodemoapp.csv.MyCSVReader
 import com.amw.lottodemoapp.extension.Pairs
+import com.amw.lottodemoapp.extension.Triples
 import com.amw.lottodemoapp.model.Draw
 import com.amw.lottodemoapp.model.SearchResult
-import org.apache.commons.lang3.SystemUtils
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import java.util.logging.Logger
 import javax.annotation.PostConstruct
-import kotlin.collections.ArrayList
 
 
 @Service
@@ -20,25 +18,22 @@ class DrawService {
 
     lateinit var drawList : List<Draw>
     lateinit var twoDim : Array<Array<MutableSet<Draw>>>
+    lateinit var threeDim : Array<Array<Array<MutableSet<Draw>>>>
 
     @PostConstruct
     fun process() : String {
         val csvReader = MyCSVReader()
         drawList = csvReader.convertAllDrawToEntities(CSV_FILENAME)
         prepareTwoDim()
+        prepareThreeDim()
         return "Done"
     }
 
     fun findDrawWithDate(date : LocalDate) = drawList.firstOrNull { it.dateOfDraw == date }
 
-    fun findByNumbers(args : Set<Int>) : List<Draw> {
-       return drawList.filter { args.all { arg -> it.numbers.contains(arg) } }
-    }
+    fun findByNumbers(args : Set<Int>) = drawList.filter { args.all { arg -> it.numbers.contains(arg) } }
 
-    fun findByQuery(args : Array<String>) : List<SearchResult> {
-
-        return getRequestedNumberOfResults(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[3]))
-    }
+    fun findByQuery(args : Array<String>) = getRequestedNumberOfResults(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[3]))
 
     private fun prepareTwoDim() {
         println("---------- preparation of numbers two dimensional matrix started-------------------------------------------------------------------------")
@@ -69,8 +64,31 @@ class DrawService {
         }
     }
 
+    private fun prepareThreeDim() {
+        println("---------- preparation of numbers three dimensional matrix started-------------------------------------------------------------------------")
+        val start = System.currentTimeMillis()
+        generateThreeDim()
+        uploadThreeDim()
+        println("---------- preparation of numbers three dimensional matrix finished in ${System.currentTimeMillis() - start} ms ---------------------------")
+    }
+
+    private fun generateThreeDim() {
+        threeDim = Array(49) {Array(49) {Array(49) { mutableSetOf<Draw>()} } }
+    }
+
+    private fun uploadThreeDim() {
+        drawList.forEach{element -> element.numbers.Triples.forEach{
+            threeDim[it.first - 1][it.second - 1][it.third - 1].add(element)
+            threeDim[it.first - 1][it.third - 1][it.second - 1].add(element)
+            threeDim[it.second - 1][it.first - 1][it.third - 1].add(element)
+            threeDim[it.second - 1][it.third - 1][it.first - 1].add(element)
+            threeDim[it.third - 1][it.first - 1][it.second - 1].add(element)
+            threeDim[it.third - 1][it.second - 1][it.first - 1].add(element)
+        }}
+    }
+
     private fun getRequestedNumberOfResults(edge : String, counter : Int, associate : Int) : List<SearchResult> {
-        val listOfResults = twoDim[associate].mapIndexed { index, mutableSet -> SearchResult(Pair(associate,index), mutableSet)}.sortedBy { it.size }
+        val listOfResults = twoDim[associate - 1].mapIndexed { index, set -> SearchResult(Pair(associate, index + 1), set)}.sortedBy { it.size }
         return when (edge.toUpperCase()) {
             "TOP"       -> listOfResults.takeLast(counter)
             "BOTTOM"    -> listOfResults.take(counter)
