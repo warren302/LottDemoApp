@@ -4,6 +4,7 @@ import com.amw.lottodemoapp.csv.MyCSVReader
 import com.amw.lottodemoapp.extension.Pairs
 import com.amw.lottodemoapp.extension.Triples
 import com.amw.lottodemoapp.model.Draw
+import com.amw.lottodemoapp.model.Element
 import com.amw.lottodemoapp.model.SearchResult
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -45,13 +46,13 @@ class DrawService {
     }
 
     private fun generateTwoDim() {
-        twoDim = Array(50) {Array(50) { mutableSetOf<Draw>()} }
+        twoDim = Array(49) {Array(49) { mutableSetOf<Draw>()} }
     }
 
     private fun uploadTwoDim() {
         drawList.forEach{element -> element.numbers.Pairs.forEach{
-            twoDim[it.first][it.second].add(element)
-            twoDim[it.second][it.first].add(element)
+            twoDim[it.first - 1][it.second - 1].add(element)
+            twoDim[it.second -1 ][it.first - 1].add(element)
         }}
     }
 
@@ -88,7 +89,7 @@ class DrawService {
     }
 
     private fun getRequestedNumberOfResults(edge : String, counter : Int, associate : Int) : List<SearchResult> {
-        val listOfResults = twoDim[associate - 1].mapIndexed { index, set -> SearchResult(Pair(associate, index + 1), set)}.sortedBy { it.size }
+        val listOfResults = twoDim[associate - 1].mapIndexed { index, set -> SearchResult(Element.fromPair(Pair(associate, index + 1)), set)}.sortedBy { it.size }
         return when (edge.toUpperCase()) {
             "TOP"       -> listOfResults.takeLast(counter)
             "BOTTOM"    -> listOfResults.take(counter)
